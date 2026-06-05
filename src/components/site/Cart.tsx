@@ -5,6 +5,14 @@ import { formatBRL } from "@/lib/menu-data";
 import { toast } from "sonner";
 
 const WHATSAPP_NUMBER = "5535984450645";
+const DELIVERY_FEE = 7;
+const DELIVERY_OPTIONS = [
+  { label: "Taxa de entrega - R$ 7,00", value: "delivery", fee: DELIVERY_FEE },
+  { label: "Retirar sem taxa de entrega", value: "pickup", fee: 0 },
+] as const;
+const PAYMENT_OPTIONS = ["PIX", "Cartão", "Dinheiro"] as const;
+type DeliveryMethod = (typeof DELIVERY_OPTIONS)[number]["value"] | "";
+type PaymentMethod = (typeof PAYMENT_OPTIONS)[number] | "";
 
 const FIELD_LIMITS = {
   name: 60,
@@ -17,6 +25,11 @@ export function Cart() {
   const [name, setName] = useState("");
   const [address, setAddress] = useState("");
   const [notes, setNotes] = useState("");
+  const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod>("");
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("");
+  const selectedDelivery = DELIVERY_OPTIONS.find((option) => option.value === deliveryMethod);
+  const deliveryFee = selectedDelivery?.fee ?? 0;
+  const finalTotal = total + deliveryFee;
 
   const checkout = () => {
     if (items.length === 0) return;
@@ -27,6 +40,8 @@ export function Cart() {
 
     if (!customerName) return toast.error("Informe seu nome");
     if (!customerAddress) return toast.error("Informe seu endereço");
+    if (!deliveryMethod) return toast.error("Selecione entrega ou retirada");
+    if (!paymentMethod) return toast.error("Selecione a forma de pagamento");
 
     const NL = "\n";
     const lines = items
@@ -34,12 +49,16 @@ export function Cart() {
       .join(NL);
 
     const message =
-      `Olá Bola Burger! Quero fazer um pedido:${NL}${NL}` +
+      `Olá Bola Burguer! Quero fazer um pedido:${NL}${NL}` +
       `Itens:${NL}${lines}${NL}${NL}` +
-      `Total: ${formatBRL(total)}${NL}${NL}` +
+      `Subtotal: ${formatBRL(total)}${NL}` +
+      `Taxa de entrega: ${formatBRL(deliveryFee)}${NL}` +
+      `Total: ${formatBRL(finalTotal)}${NL}${NL}` +
       `Cliente:${NL}` +
       `Nome: ${customerName}${NL}` +
-      `Endereço: ${customerAddress}` +
+      `Endereço: ${customerAddress}${NL}` +
+      `Entrega/retirada: ${selectedDelivery?.label}${NL}` +
+      `Pagamento: ${paymentMethod}` +
       (orderNotes ? `${NL}${NL}Observação: ${orderNotes}` : "");
 
     window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`, "_blank");
@@ -153,15 +172,67 @@ export function Cart() {
                   maxLength={FIELD_LIMITS.notes}
                 />
               </Field>
+
+              <Field label="Entrega ou retirada *">
+                <div className="grid gap-2">
+                  {DELIVERY_OPTIONS.map((option) => (
+                    <button
+                      key={option.value}
+                      type="button"
+                      onClick={() => setDeliveryMethod(option.value)}
+                      className={`rounded-lg border px-3 py-3 text-left text-sm font-bold transition-colors ${
+                        deliveryMethod === option.value
+                          ? "border-gold bg-gold text-black"
+                          : "border-border bg-background hover:bg-secondary"
+                      }`}
+                      aria-pressed={deliveryMethod === option.value}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
+              </Field>
+
+              <Field label="Forma de pagamento *">
+                <div className="grid grid-cols-3 gap-2">
+                  {PAYMENT_OPTIONS.map((option) => (
+                    <button
+                      key={option}
+                      type="button"
+                      onClick={() => setPaymentMethod(option)}
+                      className={`rounded-lg border px-2 py-3 text-sm font-bold transition-colors ${
+                        paymentMethod === option
+                          ? "border-gold bg-gold text-black"
+                          : "border-border bg-background hover:bg-secondary"
+                      }`}
+                      aria-pressed={paymentMethod === option}
+                    >
+                      {option}
+                    </button>
+                  ))}
+                </div>
+              </Field>
             </div>
           )}
         </div>
 
         {items.length > 0 && (
           <footer className="border-t border-border p-5 space-y-3 bg-background/50">
+            <div className="space-y-1 text-sm">
+              <div className="flex items-center justify-between text-muted-foreground">
+                <span>Subtotal</span>
+                <span>{formatBRL(total)}</span>
+              </div>
+              <div className="flex items-center justify-between text-muted-foreground">
+                <span>Taxa de entrega</span>
+                <span>{formatBRL(deliveryFee)}</span>
+              </div>
+            </div>
             <div className="flex items-center justify-between">
               <span className="font-bold">Total</span>
-              <span className="text-2xl font-black text-gradient-fire">{formatBRL(total)}</span>
+              <span className="text-2xl font-black text-gradient-fire">
+                {formatBRL(finalTotal)}
+              </span>
             </div>
             <button
               onClick={checkout}

@@ -27,10 +27,10 @@ const DEFAULTS: Required<HeroData> = {
     "Hambúrgueres preparados na hora, ingredientes selecionados e aquele toque que vicia. Em São José do Alegre.",
   cta_primary: "Peça Agora",
   cta_secondary: "Conheça a história",
-  stat1_n: "10K+",
-  stat1_l: "Lanches servidos",
-  stat2_n: "4.9★",
-  stat2_l: "Avaliação média",
+  stat1_n: "",
+  stat1_l: "",
+  stat2_n: "Qualidade",
+  stat2_l: "",
   stat3_n: "100%",
   stat3_l: "Artesanal",
   image_url: "",
@@ -101,7 +101,7 @@ export function Hero() {
       </div>
 
       <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-foreground/50 text-xs uppercase tracking-[0.3em] animate-bounce">
-        scroll
+        role para baixo
       </div>
     </section>
   );

@@ -25,10 +25,10 @@ const DEFAULTS: AboutData = {
   title_part1: "Mais que um lanche,",
   title_highlight: "uma experiência",
   paragraph1:
-    "A BolaBurger nasceu em São José do Alegre da paixão pelo verdadeiro hambúrguer artesanal. Cada lanche é montado na hora, com pão fresquinho, carne selecionada e ingredientes que fazem a diferença.",
+    "A BolaBurguer nasceu em São José do Alegre da paixão pelo verdadeiro hambúrguer artesanal. Cada lanche é montado na hora, com pão fresquinho, carne selecionada e ingredientes que fazem a diferença.",
   paragraph2: "Aqui, qualidade é regra, sabor é obsessão e atendimento é tradição.",
-  badge_number: "+5",
-  badge_label: "anos servindo a cidade",
+  badge_number: "",
+  badge_label: "desde 2026 servindo a cidade",
   image_url: "",
 };
 
@@ -42,7 +42,7 @@ export function About() {
           <div className="relative rounded-3xl overflow-hidden shadow-card-premium aspect-[4/5]">
             <img
               src={img}
-              alt="Ambiente da BolaBurger"
+              alt="Ambiente da BolaBurguer"
               loading="lazy"
               className="w-full h-full object-cover"
             />

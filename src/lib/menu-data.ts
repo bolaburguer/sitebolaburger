@@ -38,7 +38,7 @@ export const resolveImage = (key: string) => IMAGE_MAP[key] ?? burger1;
 export const MENU_ITEMS: MenuItem[] = [
   {
     id: "burger-classico",
-    name: "Bola Burger Clássico",
+    name: "Bola Burguer Clássico",
     description: "Hambúrguer artesanal suculento com queijo e molho da casa.",
     ingredients: "Pão brioche, blend bovino, queijo, alface, tomate e molho especial.",
     price: 24.9,
@@ -74,7 +74,7 @@ export const MENU_ITEMS: MenuItem[] = [
   },
   {
     id: "combo-bola",
-    name: "Combo Bola Burger",
+    name: "Combo Bola Burguer",
     description: "Hambúrguer, batata e bebida para completar o pedido.",
     ingredients: "Burger clássico, batata frita e refrigerante lata.",
     price: 39.9,

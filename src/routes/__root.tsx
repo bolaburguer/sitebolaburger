@@ -77,13 +77,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "BolaBurger — Hambúrgueres Artesanais Premium em São José do Alegre" },
+      { title: "BolaBurguer — Hambúrgueres Artesanais Premium em São José do Alegre" },
       {
         name: "description",
         content:
           "O verdadeiro sabor artesanal da cidade. Burgers premium, combos e porções. Peça agora pelo WhatsApp.",
       },
-      { name: "author", content: "BolaBurger" },
+      { name: "author", content: "BolaBurguer" },
       {
         property: "og:title",
         content: "BolaBurger — Hambúrgueres Artesanais Premium em São José do Alegre",
@@ -97,7 +97,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:card", content: "summary" },
       {
         name: "twitter:title",
-        content: "BolaBurger — Hambúrgueres Artesanais Premium em São José do Alegre",
+        content: "BolaBurguer — Hambúrgueres Artesanais Premium em São José do Alegre",
       },
       {
         name: "twitter:description",

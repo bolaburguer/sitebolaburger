@@ -1,4 +1,4 @@
-const WHATSAPP_TEXT = encodeURIComponent("Olá BolaBurger!");
+const WHATSAPP_TEXT = encodeURIComponent("Olá BolaBurguer!");
 
 export function WhatsFab() {
   return (

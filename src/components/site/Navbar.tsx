@@ -7,7 +7,6 @@ const links = [
   { href: "#cardapio", label: "Cardápio" },
   { href: "#sobre", label: "Sobre" },
   { href: "#galeria", label: "Galeria" },
-  { href: "#depoimentos", label: "Depoimentos" },
   { href: "#contato", label: "Contato" },
 ];
 
@@ -29,8 +28,8 @@ export function Navbar() {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 md:h-20 flex items-center justify-between">
         <a href="#top" className="flex items-center gap-2">
-          <img src={logo} alt="BolaBurger" className="h-10 md:h-12 w-auto" />
-          <span className="sr-only">BolaBurger</span>
+          <img src={logo} alt="BolaBurguer" className="h-10 md:h-12 w-auto" />
+          <span className="sr-only">BolaBurguer</span>
         </a>
         <nav className="hidden md:flex items-center gap-8">
           {links.map((l) => (

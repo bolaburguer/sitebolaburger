@@ -5,9 +5,9 @@ import { useSiteContent } from "@/lib/use-site-content";
 type FooterData = { tagline: string; whatsapp_url: string; instagram_url: string };
 const DEFAULTS: FooterData = {
   tagline:
-    "Hambúrgueres artesanais premium em São José do Alegre. Sabor que vicia, qualidade que conquista.",
+    "Hambúrgueres artesanais premium\nem São José do Alegre.\nSabor que vicia, qualidade que conquista.",
   whatsapp_url: "https://wa.me/5535984450645",
-  instagram_url: "https://instagram.com/BolaBurgue",
+  instagram_url: "https://instagram.com/bolaburguer1",
 };
 
 export function Footer() {
@@ -16,8 +16,8 @@ export function Footer() {
     <footer className="bg-card border-t border-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-14 grid md:grid-cols-3 gap-10">
         <div>
-          <img src={logo} alt="BolaBurger" className="h-16 w-auto" />
-          <p className="mt-4 text-sm text-muted-foreground max-w-xs">{d.tagline}</p>
+          <img src={logo} alt="BolaBurguer" className="h-16 w-auto" />
+          <p className="mt-4 text-sm text-muted-foreground max-w-xs whitespace-pre-line">{d.tagline}</p>
         </div>
         <div>
           <h4 className="font-black text-lg mb-4">Links rápidos</h4>
@@ -71,7 +71,7 @@ export function Footer() {
         </div>
       </div>
       <div className="border-t border-border py-6 text-center text-xs text-muted-foreground">
-        © {new Date().getFullYear()} BolaBurger · Todos os direitos reservados.
+        © {new Date().getFullYear()} BolaBurguer · Todos os direitos reservados.
       </div>
     </footer>
   );
