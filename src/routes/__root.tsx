@@ -1,4 +1,4 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+﻿import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   Outlet,
   Link,
@@ -11,6 +11,7 @@ import { Toaster } from "@/components/ui/sonner";
 
 import ogImage from "@/assets/hero-burger.jpg?url";
 import appCss from "../styles.css?url";
+import { getSupabasePublicConfigForInjection } from "../lib/supabase-env";
 
 const siteUrl = import.meta.env.VITE_SITE_URL?.replace(/\/$/, "");
 const toAbsoluteUrl = (path: string) => (siteUrl ? new URL(path, siteUrl).toString() : path);
@@ -124,9 +125,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 });
 
 function RootShell({ children }: { children: React.ReactNode }) {
+  const supabaseEnv = getSupabasePublicConfigForInjection();
+  const envScript = supabaseEnv
+    ? `window.__SUPABASE_ENV__=${JSON.stringify({
+        url: supabaseEnv.url,
+        publishableKey: supabaseEnv.publishableKey,
+      })};`
+    : null;
+
   return (
     <html lang="pt-BR">
       <head>
+        {envScript ? <script dangerouslySetInnerHTML={{ __html: envScript }} /> : null}
         <HeadContent />
       </head>
       <body>

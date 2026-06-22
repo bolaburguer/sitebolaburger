@@ -1,14 +1,19 @@
-import { useState } from "react";
+﻿import { useState, type ReactNode } from "react";
 import { X, Minus, Plus, Trash2 } from "lucide-react";
 import { useCart } from "@/lib/cart-context";
 import { formatBRL } from "@/lib/menu-data";
+import { getSupabaseConfigErrorMessage } from "@/lib/supabase-env";
+import {
+  isSupabaseConfigured,
+  supabase,
+  type NovoPedidoPayload,
+} from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
-const WHATSAPP_NUMBER = "5535984450645";
 const DELIVERY_FEE = 7;
 const DELIVERY_OPTIONS = [
-  { label: "Taxa de entrega - R$ 7,00", value: "delivery", fee: DELIVERY_FEE },
-  { label: "Retirar sem taxa de entrega", value: "pickup", fee: 0 },
+  { label: "Taxa de entrega - R$ 7,00", value: "delivery", fee: DELIVERY_FEE, tipo: "entrega" },
+  { label: "Retirar sem taxa de entrega", value: "pickup", fee: 0, tipo: "retirada" },
 ] as const;
 const PAYMENT_OPTIONS = ["PIX", "Cartão", "Dinheiro"] as const;
 type DeliveryMethod = (typeof DELIVERY_OPTIONS)[number]["value"] | "";
@@ -16,52 +21,87 @@ type PaymentMethod = (typeof PAYMENT_OPTIONS)[number] | "";
 
 const FIELD_LIMITS = {
   name: 60,
+  phone: 20,
   address: 160,
   notes: 200,
 } as const;
 
+const PAYMENT_METHOD_MAP: Record<
+  Exclude<PaymentMethod, "">,
+  NovoPedidoPayload["forma_pagamento"]
+> = {
+  PIX: "pix",
+  Cartão: "cartao",
+  Dinheiro: "dinheiro",
+};
+
 export function Cart() {
   const { items, open, setOpen, setQty, remove, total, clear } = useCart();
   const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   const [notes, setNotes] = useState("");
   const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod>("");
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("");
+  const [submitting, setSubmitting] = useState(false);
   const selectedDelivery = DELIVERY_OPTIONS.find((option) => option.value === deliveryMethod);
   const deliveryFee = selectedDelivery?.fee ?? 0;
   const finalTotal = total + deliveryFee;
 
-  const checkout = () => {
-    if (items.length === 0) return;
+  const checkout = async () => {
+    if (items.length === 0 || submitting) return;
 
     const customerName = name.trim();
+    const customerPhone = phone.trim();
     const customerAddress = address.trim();
     const orderNotes = notes.trim();
 
     if (!customerName) return toast.error("Informe seu nome");
-    if (!customerAddress) return toast.error("Informe seu endereço");
+    if (!customerPhone) return toast.error("Informe seu WhatsApp");
     if (!deliveryMethod) return toast.error("Selecione entrega ou retirada");
+    if (selectedDelivery?.tipo === "entrega" && !customerAddress) {
+      return toast.error("Informe seu endereço");
+    }
     if (!paymentMethod) return toast.error("Selecione a forma de pagamento");
+    if (!isSupabaseConfigured()) return toast.error(getSupabaseConfigErrorMessage());
 
-    const NL = "\n";
-    const lines = items
-      .map((item) => `${item.qty}x ${item.name} - ${formatBRL(item.price * item.qty)}`)
-      .join(NL);
+    const payload: NovoPedidoPayload = {
+      cliente: customerName,
+      telefone: customerPhone,
+      endereco: customerAddress || null,
+      itens: items.map((item) => ({
+        nome: item.name,
+        quantidade: item.qty,
+        preco: item.price,
+        ...(orderNotes ? { observacao: orderNotes } : {}),
+      })),
+      total: finalTotal,
+      status: "pendente",
+      tipo_entrega: selectedDelivery.tipo,
+      taxa_entrega: deliveryFee,
+      forma_pagamento: PAYMENT_METHOD_MAP[paymentMethod],
+      pago: false,
+    };
 
-    const message =
-      `Olá Bola Burguer! Quero fazer um pedido:${NL}${NL}` +
-      `Itens:${NL}${lines}${NL}${NL}` +
-      `Subtotal: ${formatBRL(total)}${NL}` +
-      `Taxa de entrega: ${formatBRL(deliveryFee)}${NL}` +
-      `Total: ${formatBRL(finalTotal)}${NL}${NL}` +
-      `Cliente:${NL}` +
-      `Nome: ${customerName}${NL}` +
-      `Endereço: ${customerAddress}${NL}` +
-      `Entrega/retirada: ${selectedDelivery?.label}${NL}` +
-      `Pagamento: ${paymentMethod}` +
-      (orderNotes ? `${NL}${NL}Observação: ${orderNotes}` : "");
+    setSubmitting(true);
+    const { error } = await supabase.from("pedidos").insert(payload);
+    setSubmitting(false);
 
-    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`, "_blank");
+    if (error) {
+      console.error(error);
+      toast.error("Não foi possível enviar seu pedido. Tente novamente.");
+      return;
+    }
+
+    toast.success("Pedido enviado! Acompanhe pelo WhatsApp informado.");
+    clear();
+    setName("");
+    setPhone("");
+    setAddress("");
+    setNotes("");
+    setDeliveryMethod("");
+    setPaymentMethod("");
+    setOpen(false);
   };
 
   return (
@@ -150,7 +190,19 @@ export function Cart() {
                 />
               </Field>
 
-              <Field label="Endereço *">
+              <Field label="WhatsApp *">
+                <input
+                  className="input"
+                  value={phone}
+                  onChange={(event) => setPhone(event.target.value.slice(0, FIELD_LIMITS.phone))}
+                  placeholder="(35) 99999-9999"
+                  autoComplete="tel"
+                  inputMode="tel"
+                  maxLength={FIELD_LIMITS.phone}
+                />
+              </Field>
+
+              <Field label="Endereço">
                 <textarea
                   className="input min-h-[88px]"
                   value={address}
@@ -236,9 +288,10 @@ export function Cart() {
             </div>
             <button
               onClick={checkout}
-              className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-fire text-white font-black py-4 shadow-glow hover:scale-[1.02] transition-transform"
+              disabled={submitting}
+              className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-fire text-white font-black py-4 shadow-glow hover:scale-[1.02] transition-transform disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:scale-100"
             >
-              <WhatsAppIcon className="size-5" /> Finalizar no WhatsApp
+              <WhatsAppIcon className="size-5" /> {submitting ? "Enviando..." : "Finalizar pedido"}
             </button>
             <button
               onClick={clear}
@@ -263,7 +316,7 @@ function WhatsAppIcon({ className }: { className?: string }) {
   );
 }
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
+function Field({ label, children }: { label: string; children: ReactNode }) {
   return (
     <label className="block">
       <span className="block text-xs font-semibold mb-1">{label}</span>
