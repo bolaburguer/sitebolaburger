@@ -1,4 +1,4 @@
-﻿import { createClient } from "@supabase/supabase-js";
+import { createClient } from "@supabase/supabase-js";
 
 import { getSupabaseConfigErrorMessage, getSupabasePublicConfig } from "@/lib/supabase-env";
 
@@ -32,6 +32,21 @@ type Database = {
         };
         Insert: NovoPedidoPayload;
         Update: Partial<NovoPedidoPayload>;
+      };
+      turnos: {
+        Row: {
+          id: number;
+          iniciado_em: string;
+          encerrado_em: string | null;
+        };
+        Insert: {
+          iniciado_em?: string;
+          encerrado_em?: string | null;
+        };
+        Update: {
+          iniciado_em?: string;
+          encerrado_em?: string | null;
+        };
       };
     };
   };

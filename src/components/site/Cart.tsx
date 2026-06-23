@@ -1,4 +1,4 @@
-﻿import { useState, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { X, Minus, Plus, Trash2 } from "lucide-react";
 import { useCart } from "@/lib/cart-context";
 import { formatBRL } from "@/lib/menu-data";
@@ -12,7 +12,12 @@ import { toast } from "sonner";
 
 const DELIVERY_FEE = 0;
 const DELIVERY_OPTIONS = [
-  { label: "Sem taxa de entrega mês de julho", value: "delivery", fee: DELIVERY_FEE, tipo: "entrega" },
+  {
+    label: "Sem taxa de entrega mês de julho",
+    value: "delivery",
+    fee: DELIVERY_FEE,
+    tipo: "entrega",
+  },
   { label: "Retirar sem taxa de entrega", value: "pickup", fee: 0, tipo: "retirada" },
 ] as const;
 const PAYMENT_OPTIONS = ["PIX", "Cartão", "Dinheiro"] as const;
@@ -65,6 +70,28 @@ export function Cart() {
     if (!paymentMethod) return toast.error("Selecione a forma de pagamento");
     if (!isSupabaseConfigured()) return toast.error(getSupabaseConfigErrorMessage());
 
+    setSubmitting(true);
+    const { data: turnoAberto, error: turnoError } = await supabase
+      .from("turnos")
+      .select("id")
+      .is("encerrado_em", null)
+      .order("iniciado_em", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (turnoError) {
+      setSubmitting(false);
+      console.error(turnoError);
+      toast.error("Não foi possível verificar se a loja está aberta.");
+      return;
+    }
+
+    if (!turnoAberto) {
+      setSubmitting(false);
+      toast.error("A loja está fechada no momento. Tente novamente quando o painel iniciar o dia.");
+      return;
+    }
+
     const payload: NovoPedidoPayload = {
       cliente: customerName,
       telefone: customerPhone,
@@ -83,7 +110,6 @@ export function Cart() {
       pago: false,
     };
 
-    setSubmitting(true);
     const { error } = await supabase.from("pedidos").insert(payload);
     setSubmitting(false);
 
@@ -247,23 +273,23 @@ export function Cart() {
 
               <Field label="--------------------- Formas de pagamentos --------------------">
                 <Field label="Caso seja PIX,será informado a CHAVE PIX ou QRCODE no WHATSAPP.">
-                <div className="grid grid-cols-3 gap-2">
-                  {PAYMENT_OPTIONS.map((option) => (
-                    <button
-                      key={option}
-                      type="button"
-                      onClick={() => setPaymentMethod(option)}
-                      className={`rounded-lg border px-2 py-3 text-sm font-bold transition-colors ${
-                        paymentMethod === option
-                          ? "border-gold bg-gold text-black"
-                          : "border-border bg-background hover:bg-secondary"
-                      }`}
-                      aria-pressed={paymentMethod === option}
-                    >
-                      {option}
-                    </button>
-                  ))}
-                </div>
+                  <div className="grid grid-cols-3 gap-2">
+                    {PAYMENT_OPTIONS.map((option) => (
+                      <button
+                        key={option}
+                        type="button"
+                        onClick={() => setPaymentMethod(option)}
+                        className={`rounded-lg border px-2 py-3 text-sm font-bold transition-colors ${
+                          paymentMethod === option
+                            ? "border-gold bg-gold text-black"
+                            : "border-border bg-background hover:bg-secondary"
+                        }`}
+                        aria-pressed={paymentMethod === option}
+                      >
+                        {option}
+                      </button>
+                    ))}
+                  </div>
                 </Field>
               </Field>
             </div>
