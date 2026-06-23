@@ -6,7 +6,7 @@ type FooterData = { tagline: string; whatsapp_url: string; instagram_url: string
 const DEFAULTS: FooterData = {
   tagline:
     "Hambúrgueres artesanais premium\nem São José do Alegre.\nSabor que vicia, qualidade que conquista.",
-  whatsapp_url: "https://wa.me/5535984450645",
+  whatsapp_url: "https://wa.me/5535910233767",
   instagram_url: "https://instagram.com/bolaburguer1",
 };
 

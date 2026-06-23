@@ -17,11 +17,11 @@ const DEFAULTS: ContactData = {
   eyebrow: "Contato",
   title_part1: "Vem pra",
   title_highlight: "BolaBurger",
-  whatsapp_number: "5535984450645",
-  whatsapp_label: "(35) 98445-0645",
+  whatsapp_number: "5535910233767",
+  whatsapp_label: "(35) 91023-3767",
   instagram_user: "BolaBurguer1",
   address: "São José do Alegre — MG",
-  hours: "Ter – Dom · 18h às 23h",
+  hours: "Sexta – Domingo · 19h às 23h",
   map_query: "São José do Alegre MG",
 };
 

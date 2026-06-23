@@ -3,7 +3,7 @@ const WHATSAPP_TEXT = encodeURIComponent("Olá BolaBurguer!");
 export function WhatsFab() {
   return (
     <a
-      href={`https://wa.me/5535984450645?text=${WHATSAPP_TEXT}`}
+      href={`https://wa.me/5535910233767?text=${WHATSAPP_TEXT}`}
       target="_blank"
       rel="noreferrer"
       aria-label="Falar no WhatsApp"
