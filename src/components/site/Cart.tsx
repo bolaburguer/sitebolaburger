@@ -10,9 +10,9 @@ import {
 } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
-const DELIVERY_FEE = 7;
+const DELIVERY_FEE = 0;
 const DELIVERY_OPTIONS = [
-  { label: "Taxa de entrega - R$ 7,00", value: "delivery", fee: DELIVERY_FEE, tipo: "entrega" },
+  { label: "Sem taxa de entrega mês de julho", value: "delivery", fee: DELIVERY_FEE, tipo: "entrega" },
   { label: "Retirar sem taxa de entrega", value: "pickup", fee: 0, tipo: "retirada" },
 ] as const;
 const PAYMENT_OPTIONS = ["PIX", "Cartão", "Dinheiro"] as const;
@@ -245,7 +245,8 @@ export function Cart() {
                 </div>
               </Field>
 
-              <Field label="Forma de pagamento *">
+              <Field label="--------------------- Formas de pagamentos --------------------">
+                <Field label="Caso seja PIX,será informado a CHAVE PIX ou QRCODE no WHATSAPP.">
                 <div className="grid grid-cols-3 gap-2">
                   {PAYMENT_OPTIONS.map((option) => (
                     <button
@@ -263,6 +264,7 @@ export function Cart() {
                     </button>
                   ))}
                 </div>
+                </Field>
               </Field>
             </div>
           )}
