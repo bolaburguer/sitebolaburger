@@ -88,7 +88,7 @@ export function Cart() {
 
     if (!turnoAberto) {
       setSubmitting(false);
-      toast.error("A loja está fechada no momento. Tente novamente quando o painel iniciar o dia.");
+      toast.error("A loja está fechada no momento.");
       return;
     }
 
