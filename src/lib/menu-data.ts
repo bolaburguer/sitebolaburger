@@ -17,6 +17,7 @@ import friesRustica from "@/assets/fries-rustica.jpg";
 import coca350ml from "@/assets/coca350ml.png";
 import coca600ml from "@/assets/coca600ml.jpg";
 import cocapadrao from "@/assets/cocapadrao.png";
+import batatacanoa from "@/assets/batata-canoa.png";
 
 export const IMAGE_MAP: Record<string, string> = {
   "burger-1": burger1,
@@ -38,6 +39,7 @@ export const IMAGE_MAP: Record<string, string> = {
   "coca350ml": coca350ml,
   "coca600ml": coca600ml,
   "cocapadrao": cocapadrao,
+  "batata-canoa": batatacanoa,
 }
 
 export const IMAGE_OPTIONS = Object.keys(IMAGE_MAP);
@@ -157,25 +159,25 @@ export const MENU_ITEMS: MenuItem[] = [
     active: true,
   },
   {
-    id: "fries-rustica-200g",
-    name: "Batata Rústica 200g",
+    id: "batata-canoa-200g",
+    name: "Batata Canoa 200g",
     description: "Com casca e temperos especiais.",
-    ingredients: "Batata rústica frita, sal, ervas.",
+    ingredients: "Batata Canoa frita, sal.",
     price: 20.0,
-    image_key: "fries-rustica",
-    image: resolveImage("fries-rustica"),
+    image_key: "batata-canoa",
+    image: resolveImage("batata-canoa"),
     category: "Porções",
     position: 8,
     active: true,
   },
   {
-    id: "fries-rustica-400g",
-    name: "Batata Rústica 400g",
+    id: "batata-canoa-400g",
+    name: "Batata Canoa 400g",
     description: "Porção família para compartilhar.",
-    ingredients: "Batata rústica frita, sal, ervas.",
+    ingredients: "Batata Canoa frita, sal.",
     price: 30.0,
-    image_key: "fries-rustica",
-    image: resolveImage("fries-rustica"),
+    image_key: "batata-canoa",
+    image: resolveImage("batata-canoa"),
     category: "Porções",
     position: 10,
     active: true,
